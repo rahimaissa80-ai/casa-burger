@@ -15,7 +15,7 @@ const Navbar = ({ onOpenCart }: { onOpenCart: () => void }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="Casa Burger Logo" className="h-12 w-12 rounded-full border-2 border-yellow-500 group-hover:rotate-12 transition-transform" />
+            <img src="/logo.png" alt="Casa Burger Logo" className="h-14 w-14 group-hover:scale-110 transition-transform duration-300" />
             <span className="text-2xl font-bold tracking-tighter text-white uppercase">CASA<span className="text-yellow-500">BURGER</span></span>
           </div>
           
@@ -373,7 +373,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#050505] border-t border-white/5 py-12 text-center">
       <div className="flex items-center justify-center gap-2 mb-6">
-        <img src="/logo.png" alt="Logo" className="h-10 w-10 rounded-full" />
+        <img src="/logo.png" alt="Logo" className="h-14 w-14" />
         <span className="text-xl font-bold text-white tracking-tighter uppercase">CASA<span className="text-yellow-500">BURGER</span></span>
       </div>
       <p className="text-gray-600 text-sm mb-4">&copy; {new Date().getFullYear()} Casa Burger Algiers.</p>
