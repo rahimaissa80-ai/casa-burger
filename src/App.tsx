@@ -170,8 +170,10 @@ const About = () => (
 );
 
 const Menu = () => {
-  const { addToCart } = useCart();
-  const items = [
+  const { addToCart, products } = useCart();
+  
+  // Default items as fallback if Firebase is empty
+  const defaultItems = [
     { 
       id: "b1", 
       name: "The Giant Casa Tower", 
@@ -202,6 +204,8 @@ const Menu = () => {
     }
   ];
 
+  const displayProducts = products.length > 0 ? products : defaultItems;
+
   return (
     <section id="menu" className="py-24 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -210,7 +214,7 @@ const Menu = () => {
           <div className="w-24 h-1 bg-yellow-500 mx-auto"></div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {items.map((item) => (
+          {displayProducts.map((item) => (
             <motion.div 
               key={item.id}
               initial={{ opacity: 0, y: 20 }}

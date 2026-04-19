@@ -12,12 +12,16 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 
-export interface CartItem {
+export interface Product {
   id: string;
   name: string;
   price: number;
-  quantity: number;
+  desc: string;
   img: string;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
 }
 
 export interface CustomerInfo {
@@ -45,6 +49,10 @@ interface CartContextType {
   placeOrder: (customer: CustomerInfo) => Promise<boolean>;
   orders: Order[];
   deleteOrder: (id: string) => Promise<void>;
+  products: Product[];
+  addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
+  updateProduct: (id: string, product: Partial<Product>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   isSyncing: boolean;
 }
 
@@ -53,9 +61,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isSyncing, setIsSyncing] = useState(true);
 
-  // Real-time listener for Firebase Firestore
+  // Real-time listener for Orders
   useEffect(() => {
     let unsubscribe = () => {};
     try {
@@ -85,6 +94,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error("Firebase Setup Error:", e);
       setIsSyncing(false);
     }
+    return () => unsubscribe();
+  }, []);
+
+  // Real-time listener for Products
+  useEffect(() => {
+    const q = query(collection(db, "products"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const productsData: Product[] = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Product));
+      setProducts(productsData);
+    });
     return () => unsubscribe();
   }, []);
 
@@ -157,10 +179,37 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const addProduct = async (product: Omit<Product, 'id'>) => {
+    try {
+      await addDoc(collection(db, "products"), product);
+    } catch (e) {
+      console.error('Firebase addProduct Error:', e);
+    }
+  };
+
+  const updateProduct = async (id: string, product: Partial<Product>) => {
+    try {
+      const { setDoc } = await import('firebase/firestore');
+      await setDoc(doc(db, "products", id), product, { merge: true });
+    } catch (e) {
+      console.error('Firebase updateProduct Error:', e);
+    }
+  };
+
+  const deleteProduct = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "products", id));
+    } catch (e) {
+      console.error('Firebase deleteProduct Error:', e);
+    }
+  };
+
   return (
     <CartContext.Provider value={{ 
       cart, addToCart, removeFromCart, updateQuantity, clearCart, 
-      placeOrder, orders, deleteOrder, isSyncing 
+      placeOrder, orders, deleteOrder, 
+      products, addProduct, updateProduct, deleteProduct,
+      isSyncing 
     }}>
       {children}
     </CartContext.Provider>
