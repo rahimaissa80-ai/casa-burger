@@ -1,33 +1,73 @@
-# Casa Burger - الموقع الرسمي 🍔
+# React + TypeScript + Vite
 
-موقع مطعم كازا برجر (Casa Burger) في بابا حسن، الجزائر. مبني باستخدام React + Vite + Tailwind CSS و Firebase.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 🚀 طريقة النشر على الإنترنت (Deployment)
+Currently, two official plugins are available:
 
-لقد قمت بتجهيز المشروع ليكون جاهزاً للنشر فوراً. أفضل خيار هو **Vercel**.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### الخيار 1: النشر عبر GitHub (موصى به)
-1. قم برفع هذا المجلد إلى مستودع (Repository) جديد على حسابك في **GitHub**.
-2. اذهب إلى [Vercel.com](https://vercel.com/) وقم بربط حسابك بـ GitHub.
-3. اختر المستودع واضغط على **Deploy**. سيقوم Vercel بالباقي تلقائياً.
+## React Compiler
 
-### الخيار 2: النشر المباشر عبر Vercel CLI
-إذا كان لديك Vercel CLI مثبتاً، فقط قم بتشغيل:
-```bash
-vercel --prod
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## 🛠️ المميزات
-- واجهة عصرية وسريعة (React + Framer Motion).
-- سلة تسوق متكاملة.
-- لوحة تحكم بسيطة (Firebase).
-- متوافق مع جميع الشاشات (Responsive Design).
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## 📁 هيكلة المشروع
-- `src/components`: المكونات الأساسية (السلة، القوائم).
-- `src/pages`: الصفحات الرئيسية.
-- `src/lib/firebase.ts`: إعدادات قاعدة البيانات.
-- `public`: الصور والأيقونات.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
----
-تم التجهيز بواسطة مساعدك الذكي في Trae.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
